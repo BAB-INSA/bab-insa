@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Service;
+
+use App\Entity\RefreshToken;
+use App\Entity\User;
+use App\Repository\RefreshTokenRepository;
+use Doctrine\ORM\EntityManagerInterface;
+
+class RefreshTokenService
+{
+    private const TTL_DAYS = 30;
+
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly RefreshTokenRepository $refreshTokenRepository,
+    ) {
+    }
+
+    public function create(User $user): RefreshToken
+    {
+        $token = new RefreshToken();
+        $token->setToken(bin2hex(random_bytes(64)));
+        $token->setUser($user);
+        $token->setExpiresAt(new \DateTimeImmutable(sprintf('+%d days', self::TTL_DAYS)));
+
+        $this->em->persist($token);
+        $this->em->flush();
+
+        return $token;
+    }
+
+    public function findValid(string $token): ?RefreshToken
+    {
+        return $this->refreshTokenRepository->findValidToken($token);
+    }
+
+    public function revoke(string $token): void
+    {
+        $this->refreshTokenRepository->revokeToken($token);
+    }
+
+    public function revokeAll(User $user): void
+    {
+        $this->refreshTokenRepository->revokeAllForUser($user);
+    }
+}

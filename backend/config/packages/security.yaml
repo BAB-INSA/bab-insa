@@ -1,0 +1,47 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            id: App\Security\UserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+
+        api:
+            pattern: ^/
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+
+    # PUBLIC_ACCESS sur les routes qui ne requièrent pas d'authentification.
+    # Les routes protégées utilisent #[IsGranted] ou #[Security] dans les controllers/resources.
+    access_control:
+        - { path: ^/auth,           roles: PUBLIC_ACCESS }
+        - { path: ^/health,         roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs,       roles: PUBLIC_ACCESS }
+        - { path: ^/api/contexts,   roles: PUBLIC_ACCESS }
+        # Routes publiques en lecture (GET)
+        - { path: ^/api/players,        methods: [GET],     roles: PUBLIC_ACCESS }
+        - { path: ^/api/teams,          methods: [GET],     roles: PUBLIC_ACCESS }
+        - { path: ^/api/matches,        methods: [GET],     roles: PUBLIC_ACCESS }
+        - { path: ^/api/team-matches,   methods: [GET],     roles: PUBLIC_ACCESS }
+        - { path: ^/api/tournaments,    methods: [GET],     roles: PUBLIC_ACCESS }
+        - { path: ^/api/elo-history,    methods: [GET],     roles: PUBLIC_ACCESS }
+        - { path: ^/api/team-elo-history, methods: [GET],  roles: PUBLIC_ACCESS }
+        - { path: ^/api/stats,          methods: [GET],     roles: PUBLIC_ACCESS }
+        # Tout le reste requiert au moins ROLE_USER
+        - { path: ^/,               roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10

@@ -1,8 +1,25 @@
 parameters:
-    level: 6
+    level: 9
     paths:
         - bin/
         - config/
         - public/
         - src/
         - tests/
+    excludePaths:
+        - var
+        - vendor
+        - tests/bootstrap.php
+    ignoreErrors:
+        -
+            identifier: doctrine.columnType
+            message: '#type mapping mismatch#'
+        -
+            identifier: property.onlyWritten
+        -
+            identifier: generics.notSubtype
+            message: '#is not subtype of template type T of object#'
+        -
+            identifier: class.notFound
+            message: '#Symfony\\Contracts\\HttpClient\\ResponseInterface#'
+

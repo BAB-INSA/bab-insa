@@ -1,0 +1,38 @@
+<?php
+
+namespace App\State\Match;
+
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
+use App\Dto\Output\MatchOutput;
+use App\Enum\MatchStatus;
+use App\Repository\SoloMatchRepository;
+use App\Service\DtoMapper;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+/** @implements ProcessorInterface<mixed, MatchOutput> */
+final class CancelMatchProcessor implements ProcessorInterface
+{
+    public function __construct(
+        private readonly SoloMatchRepository $soloMatchRepository,
+        private readonly EntityManagerInterface $em,
+        private readonly DtoMapper $mapper,
+    ) {
+    }
+
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): MatchOutput
+    {
+        $matchId = isset($uriVariables['id']) && is_scalar($uriVariables['id']) ? (int) $uriVariables['id'] : 0;
+        $match   = $this->soloMatchRepository->find($matchId);
+
+        if ($match === null) {
+            throw new NotFoundHttpException(sprintf('Match %d not found.', $matchId));
+        }
+
+        $match->setStatus(MatchStatus::Cancelled);
+        $this->em->flush();
+
+        return $this->mapper->matchToOutput($match);
+    }
+}
