@@ -3,6 +3,7 @@
 namespace App\State\Player;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\Dto\Output\MatchOutput;
 use App\Repository\PlayerRepository;
@@ -11,7 +12,7 @@ use App\Service\DtoMapper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/** @implements ProviderInterface<MatchOutput[]> */
+/** @implements ProviderInterface<MatchOutput> */
 final class PlayerMatchesProvider implements ProviderInterface
 {
     public function __construct(
@@ -21,10 +22,7 @@ final class PlayerMatchesProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @return MatchOutput[]
-     */
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): TraversablePaginator
     {
         $playerId = isset($uriVariables['id']) && is_scalar($uriVariables['id']) ? (int) $uriVariables['id'] : 0;
         $player   = $this->playerRepository->find($playerId);
@@ -42,7 +40,9 @@ final class PlayerMatchesProvider implements ProviderInterface
         $limit = max(1, min(100, $limit));
 
         $matches = $this->soloMatchRepository->findByPlayer($playerId, $page, $limit);
+        $total   = $this->soloMatchRepository->countByPlayer($playerId);
+        $items   = array_map(fn ($match) => $this->mapper->matchToOutput($match), $matches);
 
-        return array_map(fn ($match) => $this->mapper->matchToOutput($match), $matches);
+        return new TraversablePaginator(new \ArrayIterator($items), (float) $page, (float) $limit, (float) $total);
     }
 }

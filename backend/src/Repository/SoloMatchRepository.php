@@ -41,6 +41,27 @@ class SoloMatchRepository extends ServiceEntityRepository
         return $result;
     }
 
+    public function countFiltered(
+        ?int $playerId,
+        ?MatchStatus $status,
+        ?\DateTimeImmutable $from,
+        ?\DateTimeImmutable $to,
+    ): int {
+        $qb = $this->baseQuery()->select('COUNT(m.id)');
+        $this->applyFilters($qb, $playerId, $status, $from, $to);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countByPlayer(int $playerId): int
+    {
+        return (int) $this->baseQuery()
+            ->select('COUNT(m.id)')
+            ->andWhere('m.player1 = :pid OR m.player2 = :pid')
+            ->setParameter('pid', $playerId)
+            ->getQuery()->getSingleScalarResult();
+    }
+
     /** @return SoloMatch[] */
     public function findRecent(int $limit): array
     {

@@ -31,6 +31,20 @@ class UserRepository extends ServiceEntityRepository
         return $this->findOneBy(['slug' => $slug]);
     }
 
+    public function countSearch(string $search): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.deletedAt IS NULL');
+
+        if ($search !== '') {
+            $qb->andWhere('u.username LIKE :search OR u.email LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     public function findByConfirmationToken(string $token): ?User
     {
         return $this->findOneBy(['confirmationToken' => $token]);

@@ -30,6 +30,13 @@ class PlayerRepository extends ServiceEntityRepository
         return $result;
     }
 
+    public function countAll(): int
+    {
+        return (int) $this->baseQuery()
+            ->select('COUNT(p.user)')
+            ->getQuery()->getSingleScalarResult();
+    }
+
     /** @return Player[] */
     public function findTopBySoloElo(int $limit): array
     {

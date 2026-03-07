@@ -1,0 +1,7 @@
+# IDE
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# macOS
+.DS_Store

@@ -3,6 +3,7 @@
 namespace App\State\Match;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\Dto\Output\MatchOutput;
 use App\Enum\MatchStatus;
@@ -10,7 +11,7 @@ use App\Repository\SoloMatchRepository;
 use App\Service\DtoMapper;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @implements ProviderInterface<MatchOutput[]> */
+/** @implements ProviderInterface<MatchOutput> */
 final class MatchCollectionProvider implements ProviderInterface
 {
     public function __construct(
@@ -19,10 +20,7 @@ final class MatchCollectionProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @return MatchOutput[]
-     */
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): TraversablePaginator
     {
         $request = $context['request'] ?? null;
         $request = $request instanceof Request ? $request : null;
@@ -60,7 +58,9 @@ final class MatchCollectionProvider implements ProviderInterface
         }
 
         $matches = $this->soloMatchRepository->findFiltered($playerId, $status, $from, $to, $page, $limit);
+        $total   = $this->soloMatchRepository->countFiltered($playerId, $status, $from, $to);
+        $items   = array_map(fn ($match) => $this->mapper->matchToOutput($match), $matches);
 
-        return array_map(fn ($match) => $this->mapper->matchToOutput($match), $matches);
+        return new TraversablePaginator(new \ArrayIterator($items), (float) $page, (float) $limit, (float) $total);
     }
 }

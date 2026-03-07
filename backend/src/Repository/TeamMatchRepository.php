@@ -31,6 +31,13 @@ class TeamMatchRepository extends ServiceEntityRepository
         return $result;
     }
 
+    public function countAll(): int
+    {
+        return (int) $this->baseQuery()
+            ->select('COUNT(m.id)')
+            ->getQuery()->getSingleScalarResult();
+    }
+
     /** @return TeamMatch[] */
     public function findRecent(int $limit): array
     {

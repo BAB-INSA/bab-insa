@@ -30,6 +30,14 @@ class TeamRepository extends ServiceEntityRepository
         return $result;
     }
 
+    public function countAll(): int
+    {
+        return (int) $this->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->where('t.deletedAt IS NULL')
+            ->getQuery()->getSingleScalarResult();
+    }
+
     /** @return Team[] */
     public function findByPlayer(int $playerId): array
     {

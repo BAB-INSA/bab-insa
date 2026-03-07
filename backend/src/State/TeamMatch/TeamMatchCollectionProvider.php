@@ -3,13 +3,14 @@
 namespace App\State\TeamMatch;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\Dto\Output\TeamMatchOutput;
 use App\Repository\TeamMatchRepository;
 use App\Service\DtoMapper;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @implements ProviderInterface<TeamMatchOutput[]> */
+/** @implements ProviderInterface<TeamMatchOutput> */
 final class TeamMatchCollectionProvider implements ProviderInterface
 {
     public function __construct(
@@ -18,10 +19,7 @@ final class TeamMatchCollectionProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @return TeamMatchOutput[]
-     */
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): TraversablePaginator
     {
         $request = $context['request'] ?? null;
         $request = $request instanceof Request ? $request : null;
@@ -32,7 +30,9 @@ final class TeamMatchCollectionProvider implements ProviderInterface
         $limit = max(1, min(100, $limit));
 
         $matches = $this->teamMatchRepository->findPaginated($page, $limit);
+        $total   = $this->teamMatchRepository->countAll();
+        $items   = array_map(fn ($match) => $this->mapper->teamMatchToOutput($match), $matches);
 
-        return array_map(fn ($match) => $this->mapper->teamMatchToOutput($match), $matches);
+        return new TraversablePaginator(new \ArrayIterator($items), (float) $page, (float) $limit, (float) $total);
     }
 }

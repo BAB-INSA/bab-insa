@@ -14,7 +14,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 #[ORM\Table(name: 'players')]
 #[ORM\Index(columns: ['elo_rating'], name: 'idx_players_elo')]
 #[ORM\Index(columns: ['team_elo_rating'], name: 'idx_players_team_elo')]
-#[ORM\Index(columns: ['rank'], name: 'idx_players_rank')]
+#[ORM\Index(columns: ['`rank`'], name: 'idx_players_rank')]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: false)]
 class Player
 {
@@ -36,7 +36,7 @@ class Player
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, options: ['default' => '1200.00'])]
     private string $eloRating = '1200.00';
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(name: '`rank`', options: ['default' => 0])]
     private int $rank = 0;
 
     #[ORM\Column(options: ['default' => 0])]

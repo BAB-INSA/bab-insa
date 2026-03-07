@@ -3,6 +3,7 @@
 namespace App\State\Tournament;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\Dto\Output\TournamentOutput;
 use App\Enum\TournamentStatus;
@@ -11,7 +12,7 @@ use App\Repository\TournamentRepository;
 use App\Service\DtoMapper;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @implements ProviderInterface<TournamentOutput[]> */
+/** @implements ProviderInterface<TournamentOutput> */
 final class TournamentCollectionProvider implements ProviderInterface
 {
     public function __construct(
@@ -20,10 +21,7 @@ final class TournamentCollectionProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @return TournamentOutput[]
-     */
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): array
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): TraversablePaginator
     {
         $request = $context['request'] ?? null;
         $request = $request instanceof Request ? $request : null;
@@ -49,7 +47,9 @@ final class TournamentCollectionProvider implements ProviderInterface
         }
 
         $tournaments = $this->tournamentRepository->findFiltered($status, $type, $page, $limit);
+        $total       = $this->tournamentRepository->countFiltered($status, $type);
+        $items       = array_map(fn ($t) => $this->mapper->tournamentToOutput($t), $tournaments);
 
-        return array_map(fn ($t) => $this->mapper->tournamentToOutput($t), $tournaments);
+        return new TraversablePaginator(new \ArrayIterator($items), (float) $page, (float) $limit, (float) $total);
     }
 }

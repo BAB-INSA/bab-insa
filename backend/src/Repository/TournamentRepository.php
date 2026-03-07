@@ -43,4 +43,20 @@ class TournamentRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    public function countFiltered(?TournamentStatus $status, ?TournamentType $type): int
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->where('t.deletedAt IS NULL');
+
+        if ($status !== null) {
+            $qb->andWhere('t.status = :status')->setParameter('status', $status);
+        }
+        if ($type !== null) {
+            $qb->andWhere('t.type = :type')->setParameter('type', $type);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }
