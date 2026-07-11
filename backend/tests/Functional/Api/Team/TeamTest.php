@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Api\Team;
 
 use App\Tests\Factory\PlayerFactory;
@@ -32,7 +34,7 @@ class TeamTest extends AbstractApiTestCase
     {
         $team = TeamFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/teams/'.$team->getId());
+        $response = $this->client->request('GET', '/api/teams/' . $team->getId());
 
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
@@ -83,7 +85,7 @@ class TeamTest extends AbstractApiTestCase
 
         $team = TeamFactory::createOne();
 
-        $this->client->request('DELETE', '/api/teams/'.$team->getId());
+        $this->client->request('DELETE', '/api/teams/' . $team->getId());
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -95,7 +97,7 @@ class TeamTest extends AbstractApiTestCase
 
         $team = TeamFactory::createOne();
 
-        $this->client->request('DELETE', '/api/teams/'.$team->getId());
+        $this->client->request('DELETE', '/api/teams/' . $team->getId());
 
         $this->assertResponseStatusCodeSame(204);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
@@ -60,7 +62,7 @@ abstract class AbstractApiTestCase extends ApiTestCase
     protected function authenticate(string $token): void
     {
         $this->client->setDefaultOptions([
-            'headers' => ['Authorization' => 'Bearer '.$token],
+            'headers' => ['Authorization' => 'Bearer ' . $token],
         ]);
     }
 

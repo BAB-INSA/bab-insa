@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\User;
@@ -60,7 +62,7 @@ class UserRepository extends ServiceEntityRepository
 
         if ($search !== '') {
             $qb->andWhere('u.username LIKE :search OR u.email LIKE :search')
-               ->setParameter('search', '%'.$search.'%');
+               ->setParameter('search', '%' . $search . '%');
         }
 
         /** @var User[] $result */

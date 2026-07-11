@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Api\Player;
 
 use App\Tests\Factory\PlayerFactory;
@@ -58,7 +60,7 @@ class PlayerTest extends AbstractApiTestCase
     {
         $player = PlayerFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/players/'.$player->getId());
+        $response = $this->client->request('GET', '/api/players/' . $player->getId());
 
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
@@ -95,7 +97,7 @@ class PlayerTest extends AbstractApiTestCase
     {
         $player = PlayerFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/players/'.$player->getId().'/elo-history');
+        $response = $this->client->request('GET', '/api/players/' . $player->getId() . '/elo-history');
 
         $this->assertResponseIsSuccessful();
     }
@@ -108,7 +110,7 @@ class PlayerTest extends AbstractApiTestCase
     {
         $player = PlayerFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/players/'.$player->getId().'/matches');
+        $response = $this->client->request('GET', '/api/players/' . $player->getId() . '/matches');
 
         $this->assertResponseIsSuccessful();
     }
@@ -121,7 +123,7 @@ class PlayerTest extends AbstractApiTestCase
     {
         $player = PlayerFactory::createOne();
 
-        $this->client->request('GET', '/api/players/'.$player->getId().'/teams');
+        $this->client->request('GET', '/api/players/' . $player->getId() . '/teams');
 
         $this->assertResponseStatusCodeSame(401);
     }
@@ -133,7 +135,7 @@ class PlayerTest extends AbstractApiTestCase
 
         $player = PlayerFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/players/'.$player->getId().'/teams');
+        $response = $this->client->request('GET', '/api/players/' . $player->getId() . '/teams');
 
         $this->assertResponseIsSuccessful();
     }

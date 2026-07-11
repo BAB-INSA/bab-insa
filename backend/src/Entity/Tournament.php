@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Entity;
-use App\Repository\TournamentRepository;
+declare(strict_types=1);
 
+namespace App\Entity;
+
+use App\Repository\TournamentRepository;
 use App\Enum\TournamentStatus;
 use App\Enum\TournamentType;
 use Doctrine\Common\Collections\ArrayCollection;

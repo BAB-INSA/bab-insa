@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\State\Match;
 
 use ApiPlatform\Metadata\Operation;
@@ -35,7 +37,7 @@ final class UpdateMatchStatusProcessor implements ProcessorInterface
         if (count($violations) > 0) {
             $messages = [];
             foreach ($violations as $violation) {
-                $messages[] = $violation->getPropertyPath().': '.$violation->getMessage();
+                $messages[] = $violation->getPropertyPath() . ': ' . $violation->getMessage();
             }
             throw new UnprocessableEntityHttpException(implode(', ', $messages));
         }

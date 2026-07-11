@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Api\Match;
 
 use App\Tests\Factory\PlayerFactory;
@@ -92,7 +94,7 @@ class MatchTest extends AbstractApiTestCase
 
         // Player2 confirme
         $this->authenticate($token2);
-        $response = $this->client->request('PATCH', '/api/matches/'.$matchId, [
+        $response = $this->client->request('PATCH', '/api/matches/' . $matchId, [
             'json'    => ['status' => 'confirmed'],
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
         ]);
@@ -113,7 +115,7 @@ class MatchTest extends AbstractApiTestCase
 
         $match = SoloMatchFactory::new()->pending()->create();
 
-        $this->client->request('PATCH', '/api/matches/'.$match->getId().'/cancel');
+        $this->client->request('PATCH', '/api/matches/' . $match->getId() . '/cancel');
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -125,7 +127,7 @@ class MatchTest extends AbstractApiTestCase
 
         $match = SoloMatchFactory::new()->pending()->create();
 
-        $response = $this->client->request('PATCH', '/api/matches/'.$match->getId().'/cancel');
+        $response = $this->client->request('PATCH', '/api/matches/' . $match->getId() . '/cancel');
 
         $this->assertResponseIsSuccessful();
         $this->assertSame('cancelled', $response->toArray()['status']);

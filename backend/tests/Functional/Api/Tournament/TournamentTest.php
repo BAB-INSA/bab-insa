@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Api\Tournament;
 
 use App\Tests\Factory\TournamentFactory;
@@ -34,7 +36,7 @@ class TournamentTest extends AbstractApiTestCase
     {
         $tournament = TournamentFactory::new()->solo()->create();
 
-        $response = $this->client->request('GET', '/api/tournaments/'.$tournament->getId());
+        $response = $this->client->request('GET', '/api/tournaments/' . $tournament->getId());
 
         $this->assertResponseIsSuccessful();
         $data = $response->toArray();
@@ -80,7 +82,7 @@ class TournamentTest extends AbstractApiTestCase
     {
         $tournament = TournamentFactory::new()->solo()->create();
 
-        $this->client->request('POST', '/api/tournaments/'.$tournament->getId().'/join', [
+        $this->client->request('POST', '/api/tournaments/' . $tournament->getId() . '/join', [
             'json' => [],
         ]);
 
@@ -94,7 +96,7 @@ class TournamentTest extends AbstractApiTestCase
 
         $tournament = TournamentFactory::new()->solo()->opened()->create();
 
-        $response = $this->client->request('POST', '/api/tournaments/'.$tournament->getId().'/join', [
+        $response = $this->client->request('POST', '/api/tournaments/' . $tournament->getId() . '/join', [
             'json' => [],
         ]);
 
@@ -112,7 +114,7 @@ class TournamentTest extends AbstractApiTestCase
 
         $tournament = TournamentFactory::createOne();
 
-        $this->client->request('DELETE', '/api/tournaments/'.$tournament->getId());
+        $this->client->request('DELETE', '/api/tournaments/' . $tournament->getId());
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -125,7 +127,7 @@ class TournamentTest extends AbstractApiTestCase
     {
         $tournament = TournamentFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/tournaments/'.$tournament->getId().'/teams');
+        $response = $this->client->request('GET', '/api/tournaments/' . $tournament->getId() . '/teams');
 
         $this->assertResponseIsSuccessful();
     }
@@ -138,7 +140,7 @@ class TournamentTest extends AbstractApiTestCase
     {
         $tournament = TournamentFactory::createOne();
 
-        $response = $this->client->request('GET', '/api/tournaments/'.$tournament->getId().'/matches');
+        $response = $this->client->request('GET', '/api/tournaments/' . $tournament->getId() . '/matches');
 
         $this->assertResponseIsSuccessful();
     }

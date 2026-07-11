@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Api\TeamMatch;
 
 use App\Tests\Factory\TeamFactory;
@@ -82,7 +84,7 @@ class TeamMatchTest extends AbstractApiTestCase
 
         $match = TeamMatchFactory::new()->pending()->create();
 
-        $this->client->request('PATCH', '/api/team-matches/'.$match->getId().'/cancel');
+        $this->client->request('PATCH', '/api/team-matches/' . $match->getId() . '/cancel');
 
         $this->assertResponseStatusCodeSame(403);
     }
