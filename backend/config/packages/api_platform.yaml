@@ -9,6 +9,11 @@ api_platform:
         pagination_items_per_page: 20
         pagination_maximum_items_per_page: 100
         pagination_client_items_per_page: true
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+    patch_formats:
+        json: ['application/merge-patch+json', 'application/json']
     docs_formats:
         jsonld: [ 'application/ld+json' ]
         jsonopenapi: [ 'application/vnd.openapi+json' ]

@@ -116,16 +116,16 @@ class PlayerTest extends AbstractApiTestCase
     }
 
     // -------------------------------------------------------------------------
-    // GET /api/players/{id}/teams — requires auth
+    // GET /api/players/{id}/teams — public (comme l'API Go)
     // -------------------------------------------------------------------------
 
-    public function testGetPlayerTeamsRequiresAuth(): void
+    public function testGetPlayerTeamsIsPublic(): void
     {
         $player = PlayerFactory::createOne();
 
         $this->client->request('GET', '/api/players/' . $player->getId() . '/teams');
 
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseIsSuccessful();
     }
 
     public function testGetPlayerTeamsWithAuth(): void

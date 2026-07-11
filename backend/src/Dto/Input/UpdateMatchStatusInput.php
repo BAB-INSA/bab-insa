@@ -13,7 +13,7 @@ final class UpdateMatchStatusInput
     #[Assert\Choice(choices: ['confirmed', 'rejected', 'cancelled'])]
     public string $status;
 
-    public function getStatus(): MatchStatus
+    public function statusEnum(): MatchStatus
     {
         return MatchStatus::from($this->status);
     }

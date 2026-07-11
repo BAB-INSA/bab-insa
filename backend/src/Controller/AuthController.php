@@ -285,7 +285,7 @@ class AuthController extends AbstractController
             $violations = $this->validator->validate($data[$field] ?? null, $constraints);
             if (count($violations) > 0) {
                 $errors[$field] = array_map(
-                    static fn ($v) => $v->getMessage(),
+                    static fn ($v) => (string) $v->getMessage(),
                     iterator_to_array($violations)
                 );
             }

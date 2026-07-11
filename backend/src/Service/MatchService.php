@@ -45,12 +45,13 @@ class MatchService
             throw new BadRequestHttpException('Winner must be one of the two players.');
         }
 
+        // Comme en Go : le match est créé en pending, l'ELO et les stats
+        // ne sont appliqués qu'à la confirmation.
         $match = new SoloMatch();
         $match->setPlayer1($player1);
         $match->setPlayer2($player2);
         $match->setWinner($winner);
-        $match->setStatus(MatchStatus::Confirmed);
-        $match->setConfirmedAt(new \DateTimeImmutable());
+        $match->setStatus(MatchStatus::Pending);
 
         if ($input->tournamentId !== null) {
             $tournament = $this->tournamentRepository->find($input->tournamentId);
@@ -60,28 +61,28 @@ class MatchService
         }
 
         $this->em->persist($match);
-        $this->applyEloChanges($match, $player1, $player2, $winner);
         $this->em->flush();
-
-        $this->rankingService->updateSoloRanks();
 
         return $this->mapper->matchToOutput($match);
     }
 
     public function updateStatus(SoloMatch $match, UpdateMatchStatusInput $input, Player $currentPlayer): MatchOutput
     {
-        $newStatus = $input->getStatus();
+        $newStatus = $input->statusEnum();
+
+        // Comme en Go : seuls les participants peuvent modifier un match,
+        // et uniquement tant qu'il est pending.
+        $isParticipant = $currentPlayer->getId() === $match->getPlayer1()->getId()
+            || $currentPlayer->getId() === $match->getPlayer2()->getId();
+        if (!$isParticipant) {
+            throw new BadRequestHttpException('Only a participant can update a match.');
+        }
+
+        if ($match->getStatus() !== MatchStatus::Pending) {
+            throw new BadRequestHttpException('Match is not pending.');
+        }
 
         if ($newStatus === MatchStatus::Confirmed) {
-            // Seul l'adversaire peut confirmer
-            $opponent = $match->getPlayer1()->getId() === $currentPlayer->getId()
-                ? $match->getPlayer2()
-                : $match->getPlayer1();
-
-            if ($opponent->getId() !== $currentPlayer->getId()) {
-                throw new BadRequestHttpException('Only the opponent can confirm a match.');
-            }
-
             $match->setStatus(MatchStatus::Confirmed);
             $match->setConfirmedAt(new \DateTimeImmutable());
 

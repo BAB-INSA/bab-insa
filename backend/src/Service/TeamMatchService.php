@@ -69,7 +69,7 @@ class TeamMatchService
 
     public function updateStatus(TeamMatch $match, UpdateMatchStatusInput $input): TeamMatchOutput
     {
-        $newStatus = $input->getStatus();
+        $newStatus = $input->statusEnum();
 
         if ($newStatus === MatchStatus::Confirmed) {
             $match->setStatus(MatchStatus::Confirmed);

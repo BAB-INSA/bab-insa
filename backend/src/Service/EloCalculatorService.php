@@ -25,11 +25,17 @@ class EloCalculatorService
      */
     public function calculate(float $playerElo, float $opponentElo, bool $won): float
     {
-        $expected  = 1.0 / (1.0 + 10 ** (($opponentElo - $playerElo) / 400.0));
-        $actual    = $won ? 1.0 : 0.0;
-        $newElo    = $playerElo + self::K_FACTOR * ($actual - $expected);
+        $expected = 1.0 / (1.0 + 10 ** (($opponentElo - $playerElo) / 400.0));
+        $actual   = $won ? 1.0 : 0.0;
+        $change   = self::K_FACTOR * ($actual - $expected);
 
-        return max(self::MIN_ELO, round($newElo, 2));
+        // Comme en Go : le changement est plafonné pour ne pas passer sous MIN_ELO,
+        // puis arrondi à l'entier (math.Round).
+        if ($playerElo + $change < self::MIN_ELO) {
+            $change = self::MIN_ELO - $playerElo;
+        }
+
+        return $playerElo + round($change);
     }
 
     /**

@@ -29,7 +29,7 @@ class TournamentService
     {
         $tournament = new Tournament();
         $tournament->setName($input->name);
-        $tournament->setType($input->getType());
+        $tournament->setType($input->typeEnum());
         $tournament->setDescription($input->description);
 
         $this->em->persist($tournament);
@@ -43,8 +43,8 @@ class TournamentService
         if ($input->name !== null) {
             $tournament->setName($input->name);
         }
-        if ($input->getStatus() !== null) {
-            $tournament->setStatus($input->getStatus());
+        if ($input->statusEnum() !== null) {
+            $tournament->setStatus($input->statusEnum());
         }
         if ($input->description !== null) {
             $tournament->setDescription($input->description);

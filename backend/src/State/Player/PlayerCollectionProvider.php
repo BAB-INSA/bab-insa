@@ -26,7 +26,8 @@ final class PlayerCollectionProvider implements ProviderInterface
         $request = $context['request'] ?? null;
         $request = $request instanceof Request ? $request : null;
         $page    = $request !== null ? (int) ($request->query->get('page', 1)) : 1;
-        $limit   = $request !== null ? (int) ($request->query->get('limit', 20)) : 20;
+        // `itemsPerPage` est le paramètre standard API Platform, `limit` celui de l'API Go
+        $limit   = $request !== null ? (int) ($request->query->get('itemsPerPage', $request->query->get('limit', 20))) : 20;
 
         $page  = max(1, $page);
         $limit = max(1, min(100, $limit));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Api\TeamMatch;
 
+use App\Tests\Factory\PlayerFactory;
 use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TeamMatchFactory;
 use App\Tests\Functional\Api\AbstractApiTestCase;
@@ -45,19 +46,17 @@ class TeamMatchTest extends AbstractApiTestCase
 
     public function testCreateTeamMatchSuccess(): void
     {
-        ['token' => $token] = $this->createUserWithPlayer();
+        ['token' => $token, 'player' => $player] = $this->createUserWithPlayer();
         $this->authenticate($token);
 
-        // Récupérer le player courant
-        $meResponse = $this->client->request('GET', '/api/users/me');
-        $playerId = $meResponse->toArray()['player']['id'] ?? null;
-
         $opponent = TeamFactory::createOne();
+        $partner  = PlayerFactory::createOne();
 
         // Créer une team dont le player actuel est membre
         $myTeamResponse = $this->client->request('POST', '/api/teams', [
             'json' => [
-                'player2Id' => $opponent->getPlayer1()->getId(),
+                'player1Id' => $player->getId(),
+                'player2Id' => $partner->getId(),
                 'name'      => 'My Team',
             ],
         ]);
@@ -65,6 +64,7 @@ class TeamMatchTest extends AbstractApiTestCase
 
         $response = $this->client->request('POST', '/api/team-matches', [
             'json' => [
+                'team1Id'      => $myTeamId,
                 'team2Id'      => $opponent->getId(),
                 'winnerTeamId' => $opponent->getId(),
             ],

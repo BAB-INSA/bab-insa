@@ -17,7 +17,7 @@ final class UpdateTournamentInput
 
     public ?string $description = null;
 
-    public function getStatus(): ?TournamentStatus
+    public function statusEnum(): ?TournamentStatus
     {
         return $this->status !== null ? TournamentStatus::from($this->status) : null;
     }

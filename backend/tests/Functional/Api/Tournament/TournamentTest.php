@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Api\Tournament;
 
+use App\Tests\Factory\TeamFactory;
 use App\Tests\Factory\TournamentFactory;
 use App\Tests\Functional\Api\AbstractApiTestCase;
 
@@ -91,13 +92,16 @@ class TournamentTest extends AbstractApiTestCase
 
     public function testJoinSoloTournament(): void
     {
-        ['token' => $token] = $this->createUserWithPlayer();
+        ['token' => $token, 'player' => $player] = $this->createUserWithPlayer();
         $this->authenticate($token);
 
         $tournament = TournamentFactory::new()->solo()->opened()->create();
 
+        // Comme dans l'API Go, rejoindre un tournoi exige un teamId dont le joueur est membre
+        $team = TeamFactory::new()->with(['player1' => $player])->create();
+
         $response = $this->client->request('POST', '/api/tournaments/' . $tournament->getId() . '/join', [
-            'json' => [],
+            'json' => ['teamId' => $team->getId()],
         ]);
 
         $this->assertResponseIsSuccessful();

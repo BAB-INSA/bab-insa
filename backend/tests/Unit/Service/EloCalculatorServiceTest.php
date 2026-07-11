@@ -23,20 +23,22 @@ class EloCalculatorServiceTest extends TestCase
 
     public function testWinnerGainsEloLoserLoses(): void
     {
-        $winnerNewElo = $this->service->calculate(1200.0, 1200.0, true);
-        $loserNewElo  = $this->service->calculate(1200.0, 1200.0, false);
+        // ELO > 1200 pour ne pas déclencher le plancher MIN_ELO côté perdant
+        $winnerNewElo = $this->service->calculate(1500.0, 1500.0, true);
+        $loserNewElo  = $this->service->calculate(1500.0, 1500.0, false);
 
-        $this->assertGreaterThan(1200.0, $winnerNewElo);
-        $this->assertLessThan(1200.0, $loserNewElo);
+        $this->assertGreaterThan(1500.0, $winnerNewElo);
+        $this->assertLessThan(1500.0, $loserNewElo);
     }
 
     public function testEloChangeIsSymmetric(): void
     {
-        $winnerElo = $this->service->calculate(1200.0, 1200.0, true);
-        $loserElo  = $this->service->calculate(1200.0, 1200.0, false);
+        // ELO > 1200 pour ne pas déclencher le plancher MIN_ELO côté perdant
+        $winnerElo = $this->service->calculate(1500.0, 1500.0, true);
+        $loserElo  = $this->service->calculate(1500.0, 1500.0, false);
 
-        $winnerGain = $winnerElo - 1200.0;
-        $loserLoss  = 1200.0 - $loserElo;
+        $winnerGain = $winnerElo - 1500.0;
+        $loserLoss  = 1500.0 - $loserElo;
 
         // La somme des changements est nulle (K * (1-0.5) + K * (0-0.5) = 0)
         $this->assertEqualsWithDelta($winnerGain, $loserLoss, 0.01);
@@ -90,12 +92,13 @@ class EloCalculatorServiceTest extends TestCase
     {
         return [
             // winnerElo, loserElo, expectedWinner, expectedLoser
+            // Valeurs issues de l'algo Go : change = math.Round(K * (actual - expected))
             // K=32, égaux → +16 / -16
-            'equal elo'            => [1200.0, 1200.0, 1216.0, 1200.0],  // loser min=1200
-            // fort bat faible
-            'strong beats weak'    => [1800.0, 1200.0, 1801.5, 1200.0], // loser min=1200
-            // faible bat fort
-            'weak beats strong'    => [1200.0, 1800.0, 1230.5, 1769.5],
+            'equal elo'            => [1200.0, 1200.0, 1216.0, 1200.0], // loser min=1200
+            // fort bat faible : change = round(0.98) = +1
+            'strong beats weak'    => [1800.0, 1200.0, 1801.0, 1200.0], // loser min=1200
+            // faible bat fort : change = round(31.02) = ±31
+            'weak beats strong'    => [1200.0, 1800.0, 1231.0, 1769.0],
         ];
     }
 }

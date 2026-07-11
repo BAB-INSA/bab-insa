@@ -45,13 +45,14 @@ class MatchTest extends AbstractApiTestCase
 
     public function testCreateMatchSuccess(): void
     {
-        ['token' => $token, 'user' => $user] = $this->createUserWithPlayer();
+        ['token' => $token, 'player' => $player] = $this->createUserWithPlayer();
         $this->authenticate($token);
 
         $opponent = PlayerFactory::createOne();
 
         $response = $this->client->request('POST', '/api/matches', [
             'json' => [
+                'player1Id' => $player->getId(),
                 'player2Id' => $opponent->getId(),
                 'winnerId'  => $opponent->getId(),
             ],
@@ -70,25 +71,18 @@ class MatchTest extends AbstractApiTestCase
     public function testConfirmMatchUpdatesElo(): void
     {
         // Créer player1 (créateur du match)
-        ['token' => $token1] = $this->createUserWithPlayer();
+        ['token' => $token1, 'player' => $player1] = $this->createUserWithPlayer();
 
         // Créer player2 (confirmateur)
-        ['token' => $token2] = $this->createUserWithPlayer();
+        ['token' => $token2, 'player' => $player2] = $this->createUserWithPlayer();
 
-        $this->authenticate($token1);
-
-        // Récupérer les IDs players
-        $meResponse = $this->client->request('GET', '/api/users/me');
-        $player1Id = $meResponse->toArray()['player']['id'] ?? null;
-
-        $this->authenticate($token2);
-        $meResponse2 = $this->client->request('GET', '/api/users/me');
-        $player2Id = $meResponse2->toArray()['player']['id'] ?? null;
+        $player1Id = $player1->getId();
+        $player2Id = $player2->getId();
 
         // Player1 crée le match
         $this->authenticate($token1);
         $createResponse = $this->client->request('POST', '/api/matches', [
-            'json' => ['player2Id' => $player2Id, 'winnerId' => $player2Id],
+            'json' => ['player1Id' => $player1Id, 'player2Id' => $player2Id, 'winnerId' => $player2Id],
         ]);
         $matchId = $createResponse->toArray()['id'];
 
@@ -115,7 +109,10 @@ class MatchTest extends AbstractApiTestCase
 
         $match = SoloMatchFactory::new()->pending()->create();
 
-        $this->client->request('PATCH', '/api/matches/' . $match->getId() . '/cancel');
+        $this->client->request('PATCH', '/api/matches/' . $match->getId() . '/cancel', [
+            'json'    => [],
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+        ]);
 
         $this->assertResponseStatusCodeSame(403);
     }
@@ -127,7 +124,10 @@ class MatchTest extends AbstractApiTestCase
 
         $match = SoloMatchFactory::new()->pending()->create();
 
-        $response = $this->client->request('PATCH', '/api/matches/' . $match->getId() . '/cancel');
+        $response = $this->client->request('PATCH', '/api/matches/' . $match->getId() . '/cancel', [
+            'json'    => [],
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+        ]);
 
         $this->assertResponseIsSuccessful();
         $this->assertSame('cancelled', $response->toArray()['status']);

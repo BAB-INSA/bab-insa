@@ -19,7 +19,7 @@ final class CreateTournamentInput
 
     public ?string $description = null;
 
-    public function getType(): TournamentType
+    public function typeEnum(): TournamentType
     {
         return TournamentType::from($this->type);
     }

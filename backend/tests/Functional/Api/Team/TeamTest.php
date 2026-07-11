@@ -58,13 +58,13 @@ class TeamTest extends AbstractApiTestCase
 
     public function testCreateTeamSuccess(): void
     {
-        ['token' => $token] = $this->createUserWithPlayer();
+        ['token' => $token, 'player' => $player] = $this->createUserWithPlayer();
         $this->authenticate($token);
 
         $partner = PlayerFactory::createOne();
 
         $response = $this->client->request('POST', '/api/teams', [
-            'json' => ['player2Id' => $partner->getId(), 'name' => 'Dream Team'],
+            'json' => ['player1Id' => $player->getId(), 'player2Id' => $partner->getId(), 'name' => 'Dream Team'],
         ]);
 
         $this->assertResponseStatusCodeSame(201);

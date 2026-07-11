@@ -19,7 +19,4 @@ parameters:
         -
             identifier: generics.notSubtype
             message: '#is not subtype of template type T of object#'
-        -
-            identifier: class.notFound
-            message: '#Symfony\\Contracts\\HttpClient\\ResponseInterface#'
 

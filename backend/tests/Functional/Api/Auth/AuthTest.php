@@ -149,10 +149,18 @@ class AuthTest extends AbstractApiTestCase
 
     public function testLogout(): void
     {
-        ['token' => $token] = $this->createUserWithPlayer();
-        $this->authenticate($token);
+        ['user' => $user] = $this->createUserWithPlayer();
 
-        $this->client->request('POST', '/auth/logout');
+        // Login pour récupérer le refresh token, exigé par le logout (comme l'API Go)
+        $loginResponse = $this->client->request('POST', '/auth/login', [
+            'json' => ['email' => $user->getEmail(), 'password' => 'password'],
+        ]);
+        $loginData = $loginResponse->toArray();
+        $this->authenticate($loginData['token']);
+
+        $this->client->request('POST', '/auth/logout', [
+            'json' => ['refresh_token' => $loginData['refresh_token']],
+        ]);
 
         $this->assertResponseIsSuccessful();
     }
