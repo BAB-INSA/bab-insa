@@ -13,6 +13,7 @@ export default [
     name: 'app/files-to-ignore',
     ignores: [
       '**/node_modules/**',
+      '**/.vite/**',
       '**/dist/**',
       '**/dev-dist/**',
       '**/dist-ssr/**',

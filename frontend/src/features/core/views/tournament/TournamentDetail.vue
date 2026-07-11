@@ -56,7 +56,7 @@
                         <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full">
                             <Users class="w-6 h-6 text-blue-600" />
                         </div>
-                        <div class="text-3xl font-bold text-blue-600 mb-2">{{ tournament.nb_participants }}</div>
+                        <div class="text-3xl font-bold text-blue-600 mb-2">{{ tournament.nbParticipants }}</div>
                         <div class="text-sm font-medium text-muted-foreground">Participants</div>
                     </CardContent>
                 </Card>
@@ -66,7 +66,7 @@
                         <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-cyan-100 rounded-full">
                             <Swords class="w-6 h-6 text-cyan-600" />
                         </div>
-                        <div class="text-3xl font-bold text-cyan-600 mb-2">{{ tournament.nb_matches }}</div>
+                        <div class="text-3xl font-bold text-cyan-600 mb-2">{{ tournament.nbMatches }}</div>
                         <div class="text-sm font-medium text-muted-foreground">Matchs</div>
                     </CardContent>
                 </Card>
@@ -135,11 +135,11 @@
                                                 class="border-b last:border-0 hover:bg-muted/50 transition-colors"
                                             >
                                                 <td class="py-3 px-4">
-                                                    <TeamLink :team="entry.team" />
+                                                    <TeamLink :team="entry" />
                                                 </td>
                                                 <td class="py-3 px-4 text-center font-medium text-green-600">{{ entry.wins }}</td>
                                                 <td class="py-3 px-4 text-center font-medium text-red-600">{{ entry.losses }}</td>
-                                                <td class="py-3 px-4 text-center font-medium">{{ Math.round(entry.team.elo_rating) }}</td>
+                                                <td class="py-3 px-4 text-center font-medium">{{ Math.round(entry.eloRating) }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -201,15 +201,15 @@
                                                 class="border-b last:border-0 hover:bg-muted/50 transition-colors"
                                             >
                                                 <td class="py-3 px-4">
-                                                    <span :class="{'font-bold text-green-600': match.winner_team?.id === match.team1.id}">
+                                                    <span :class="{'font-bold text-green-600': match.winnerTeam?.id === match.team1.id}">
                                                         <TeamLink :team="match.team1" />
                                                     </span>
-                                                    <span v-if="match.winner_team?.id === match.team1.id" class="ml-1">👑</span>
+                                                    <span v-if="match.winnerTeam?.id === match.team1.id" class="ml-1">👑</span>
                                                 </td>
                                                 <td class="py-3 px-4 text-center text-muted-foreground text-sm">VS</td>
                                                 <td class="py-3 px-4 text-right">
-                                                    <span v-if="match.winner_team?.id === match.team2.id" class="mr-1">👑</span>
-                                                    <span :class="{'font-bold text-green-600': match.winner_team?.id === match.team2.id}">
+                                                    <span v-if="match.winnerTeam?.id === match.team2.id" class="mr-1">👑</span>
+                                                    <span :class="{'font-bold text-green-600': match.winnerTeam?.id === match.team2.id}">
                                                         <TeamLink :team="match.team2" />
                                                     </span>
                                                 </td>
@@ -286,7 +286,7 @@ import TeamLink from '@/features/core/components/TeamLink.vue'
 import CreateTeamMatchTournamentModal from '@/features/core/components/CreateTeamMatchTournamentModal.vue'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import type { Tournament } from '@/features/core/types/tournament'
-import type { TournamentTeamEntry } from '@/features/core/types/tournament'
+import type { Team } from '@/features/core/types/team'
 import type { TeamMatch } from '@/features/admin/types/team-match'
 
 const route = useRoute()
@@ -306,7 +306,7 @@ const canDeclareMatch = computed(() => {
     if (tournament.value?.status !== 'ongoing') return false
     const userId = authStore.user.id
     return teams.value.some(
-        entry => entry.team.player1_id === userId || entry.team.player2_id === userId,
+        (entry: Team) => entry.player1.id === userId || entry.player2.id === userId,
     )
 })
 
@@ -315,7 +315,7 @@ const userTeamEntry = computed(() => {
     if (!authStore.isAuthenticated || !authStore.user?.id) return null
     const userId = authStore.user.id
     return teams.value.find(
-        entry => entry.team.player1_id === userId || entry.team.player2_id === userId,
+        (entry: Team) => entry.player1.id === userId || entry.player2.id === userId,
     ) ?? null
 })
 
@@ -332,9 +332,9 @@ const handleLeaveTournament = async () => {
 
     try {
         isLeavingTournament.value = true
-        await tournamentService.leaveTournament(tournament.value.id, userTeamEntry.value.team.id)
+        await tournamentService.leaveTournament(tournament.value.id, userTeamEntry.value.id)
         toast.success('Vous avez quitté le tournoi', {
-            description: `Votre équipe "${userTeamEntry.value.team.name}" a été retirée du tournoi.`,
+            description: `Votre équipe "${userTeamEntry.value.name}" a été retirée du tournoi.`,
         })
         await loadTournament()
     } catch (error) {
@@ -346,7 +346,7 @@ const handleLeaveTournament = async () => {
 }
 
 // Teams state
-const teams = ref<TournamentTeamEntry[]>([])
+const teams = ref<Team[]>([])
 const teamsLoading = ref(false)
 const teamsPage = ref(1)
 const teamsTotalPages = ref(1)

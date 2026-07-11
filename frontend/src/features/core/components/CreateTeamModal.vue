@@ -158,8 +158,8 @@ const handleSubmit = async () => {
     isSubmitting.value = true
     
     const teamData: TeamCreateData = {
-      player1_id: authStore.user.id,
-      player2_id: parseInt(selectedPlayer2Id.value),
+      player1Id: authStore.user.id,
+      player2Id: parseInt(selectedPlayer2Id.value),
       name: teamName.value.trim()
     }
     

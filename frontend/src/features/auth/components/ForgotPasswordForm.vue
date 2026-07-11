@@ -58,7 +58,7 @@ const handleSubmit = async () => {
   error.value = null
 
   try {
-    await forgotPasswordService.sendPasswordResetLink({ email: email.value, callBackUrl: '/reset-password?token=[token]' })
+    await forgotPasswordService.sendPasswordResetLink({ email: email.value })
 
     success.value = true
 

@@ -31,6 +31,13 @@ class TeamEloHistory
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private TeamMatch $teamMatch;
 
+    /**
+     * L'équipe adverse au moment du match (comme dans l'API Go).
+     */
+    #[ORM\ManyToOne(targetEntity: Team::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Team $opponentTeam = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private string $eloBefore;
 
@@ -77,6 +84,18 @@ class TeamEloHistory
     public function setTeamMatch(TeamMatch $teamMatch): static
     {
         $this->teamMatch = $teamMatch;
+
+        return $this;
+    }
+
+    public function getOpponentTeam(): ?Team
+    {
+        return $this->opponentTeam;
+    }
+
+    public function setOpponentTeam(?Team $opponentTeam): static
+    {
+        $this->opponentTeam = $opponentTeam;
 
         return $this;
     }

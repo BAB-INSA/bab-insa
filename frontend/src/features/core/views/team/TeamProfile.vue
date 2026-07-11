@@ -22,7 +22,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full">
                 <TrendingUp class="w-6 h-6 text-blue-600" />
               </div>
-              <div class="text-3xl font-bold text-blue-600 mb-2">{{ Math.round(teamData.elo_rating) }}</div>
+              <div class="text-3xl font-bold text-blue-600 mb-2">{{ Math.round(teamData.eloRating) }}</div>
               <div class="text-sm font-medium text-muted-foreground">ELO Équipe</div>
             </CardContent>
           </Card>
@@ -33,7 +33,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-cyan-100 rounded-full">
                 <Target class="w-6 h-6 text-cyan-600" />
               </div>
-              <div class="text-3xl font-bold text-cyan-600 mb-2">{{ teamData.total_matches }}</div>
+              <div class="text-3xl font-bold text-cyan-600 mb-2">{{ teamData.totalMatches }}</div>
               <div class="text-sm font-medium text-muted-foreground">Parties jouées</div>
             </CardContent>
           </Card>
@@ -76,11 +76,11 @@
             <!-- Stats individuelles du joueur 1 -->
             <div class="grid grid-cols-2 gap-4">
               <div class="text-center">
-                <div class="text-2xl font-bold text-yellow-600">{{ Math.round(teamData.player1.elo_rating) }}</div>
+                <div class="text-2xl font-bold text-yellow-600">{{ Math.round(teamData.player1.eloRating) }}</div>
                 <div class="text-sm text-muted-foreground">ELO 1v1</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-blue-600">{{ Math.round(teamData.player1.team_elo_rating) }}</div>
+                <div class="text-2xl font-bold text-blue-600">{{ Math.round(teamData.player1.teamEloRating) }}</div>
                 <div class="text-sm text-muted-foreground">ELO 2v2</div>
               </div>
             </div>
@@ -88,11 +88,11 @@
             <!-- Stats matches du joueur 1 -->
             <div class="grid grid-cols-2 gap-4 pt-2 border-t">
               <div class="text-center">
-                <div class="text-lg font-semibold">{{ teamData.player1.total_matches }}</div>
+                <div class="text-lg font-semibold">{{ teamData.player1.totalMatches }}</div>
                 <div class="text-sm text-muted-foreground">Matches 1v1</div>
               </div>
               <div class="text-center">
-                <div class="text-lg font-semibold">{{ teamData.player1.team_total_matches }}</div>
+                <div class="text-lg font-semibold">{{ teamData.player1.teamTotalMatches }}</div>
                 <div class="text-sm text-muted-foreground">Matches 2v2</div>
               </div>
             </div>
@@ -123,11 +123,11 @@
             <!-- Stats individuelles du joueur 2 -->
             <div class="grid grid-cols-2 gap-4">
               <div class="text-center">
-                <div class="text-2xl font-bold text-yellow-600">{{ Math.round(teamData.player2.elo_rating) }}</div>
+                <div class="text-2xl font-bold text-yellow-600">{{ Math.round(teamData.player2.eloRating) }}</div>
                 <div class="text-sm text-muted-foreground">ELO 1v1</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-blue-600">{{ Math.round(teamData.player2.team_elo_rating) }}</div>
+                <div class="text-2xl font-bold text-blue-600">{{ Math.round(teamData.player2.teamEloRating) }}</div>
                 <div class="text-sm text-muted-foreground">ELO 2v2</div>
               </div>
             </div>
@@ -135,11 +135,11 @@
             <!-- Stats matches du joueur 2 -->
             <div class="grid grid-cols-2 gap-4 pt-2 border-t">
               <div class="text-center">
-                <div class="text-lg font-semibold">{{ teamData.player2.total_matches }}</div>
+                <div class="text-lg font-semibold">{{ teamData.player2.totalMatches }}</div>
                 <div class="text-sm text-muted-foreground">Matches 1v1</div>
               </div>
               <div class="text-center">
-                <div class="text-lg font-semibold">{{ teamData.player2.team_total_matches }}</div>
+                <div class="text-lg font-semibold">{{ teamData.player2.teamTotalMatches }}</div>
                 <div class="text-sm text-muted-foreground">Matches 2v2</div>
               </div>
             </div>
@@ -179,15 +179,15 @@ const teamData = ref<Team | null>(null)
 const isLoading = ref(true)
 
 const teamWinRate = computed(() => {
-  if (!teamData.value || teamData.value.total_matches === 0) return 0
-  return Math.round((teamData.value.wins / teamData.value.total_matches) * 100)
+  if (!teamData.value || teamData.value.totalMatches === 0) return 0
+  return Math.round((teamData.value.wins / teamData.value.totalMatches) * 100)
 })
 
 const getPlayerWinRate = (player: Player, type: 'solo' | 'team') => {
   if (type === 'solo') {
-    return player.total_matches > 0 ? Math.round((player.wins / player.total_matches) * 100) : 0
+    return player.totalMatches > 0 ? Math.round((player.wins / player.totalMatches) * 100) : 0
   } else {
-    return player.team_total_matches > 0 ? Math.round((player.team_wins / player.team_total_matches) * 100) : 0
+    return player.teamTotalMatches > 0 ? Math.round((player.teamWins / player.teamTotalMatches) * 100) : 0
   }
 }
 

@@ -28,6 +28,15 @@ class TournamentTeam
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Team $team;
 
+    /**
+     * Stats de l'équipe au sein de ce tournoi (mises à jour à la confirmation des matchs).
+     */
+    #[ORM\Column(options: ['unsigned' => true, 'default' => 0])]
+    private int $wins = 0;
+
+    #[ORM\Column(options: ['unsigned' => true, 'default' => 0])]
+    private int $losses = 0;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $joinedAt;
 
@@ -61,6 +70,30 @@ class TournamentTeam
     public function setTeam(Team $team): static
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getWins(): int
+    {
+        return $this->wins;
+    }
+
+    public function setWins(int $wins): static
+    {
+        $this->wins = $wins;
+
+        return $this;
+    }
+
+    public function getLosses(): int
+    {
+        return $this->losses;
+    }
+
+    public function setLosses(int $losses): static
+    {
+        $this->losses = $losses;
 
         return $this;
     }

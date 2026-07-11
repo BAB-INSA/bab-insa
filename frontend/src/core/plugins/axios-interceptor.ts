@@ -42,7 +42,6 @@ function normalizeHydraResponse(data: unknown): unknown {
 
         // Single item: strip JSON-LD metadata
         if ('@type' in obj || '@context' in obj) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { '@context': _ctx, '@type': _type, '@id': _id, ...rest } = obj
             return rest
         }

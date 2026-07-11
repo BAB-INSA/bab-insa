@@ -107,7 +107,7 @@
               </td>
               <td class="px-6 py-4">
                 <div class="font-mono text-lg">
-                  {{ match.player1.elo_rating }} - {{ match.player2.elo_rating }}
+                  {{ match.player1.eloRating }} - {{ match.player2.eloRating }}
                 </div>
                 <div class="text-xs text-gray-500">ELO Rating</div>
               </td>
@@ -117,10 +117,10 @@
                 </Badge>
               </td>
               <td class="px-6 py-4">
-                {{ formatDate(match.created_at) }}
+                {{ formatDate(match.createdAt) }}
               </td>
               <td class="px-6 py-4">
-                {{ match.confirmed_at ? formatDate(match.confirmed_at) : '-' }}
+                {{ match.confirmedAt ? formatDate(match.confirmedAt) : '-' }}
               </td>
               <td class="px-6 py-4">
                 <div class="flex space-x-2">
@@ -387,7 +387,7 @@ const formatStatus = (status: Match['status']) => {
 const canDeleteMatch = (match: Match) => {
   const oneWeekAgo = new Date()
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-  const matchCreatedAt = new Date(match.created_at)
+  const matchCreatedAt = new Date(match.createdAt)
   return matchCreatedAt >= oneWeekAgo
 }
 

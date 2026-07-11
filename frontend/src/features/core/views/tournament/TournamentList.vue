@@ -90,10 +90,10 @@
                                         {{ getStatusLabel(tournament.status) }}
                                     </Badge>
                                 </td>
-                                <td class="py-3 px-4 text-center">{{ tournament.nb_participants }}</td>
-                                <td class="py-3 px-4 text-center">{{ tournament.nb_matches }}</td>
+                                <td class="py-3 px-4 text-center">{{ tournament.nbParticipants }}</td>
+                                <td class="py-3 px-4 text-center">{{ tournament.nbMatches }}</td>
                                 <td class="py-3 px-4 text-right text-muted-foreground">
-                                    {{ formatDate(tournament.created_at) }}
+                                    {{ formatDate(tournament.createdAt) }}
                                 </td>
                             </tr>
                         </tbody>

@@ -85,8 +85,8 @@ class DtoMapper
         $dto->id           = (int) $team->getId();
         $dto->name         = $team->getName();
         $dto->slug         = $team->getSlug();
-        $dto->player1      = $this->playerToMin($team->getPlayer1());
-        $dto->player2      = $this->playerToMin($team->getPlayer2());
+        $dto->player1      = $this->playerToOutput($team->getPlayer1());
+        $dto->player2      = $this->playerToOutput($team->getPlayer2());
         $dto->eloRating    = $team->getEloRating();
         $dto->totalMatches = $team->getTotalMatches();
         $dto->wins         = $team->getWins();
@@ -176,6 +176,7 @@ class DtoMapper
         $dto->eloBefore   = $history->getEloBefore();
         $dto->eloAfter    = $history->getEloAfter();
         $dto->eloChange   = $history->getEloChange();
+        $dto->opponentTeamId = $history->getOpponentTeam()?->getId();
         $dto->createdAt   = $history->getCreatedAt()->format(\DateTimeInterface::ATOM);
 
         return $dto;

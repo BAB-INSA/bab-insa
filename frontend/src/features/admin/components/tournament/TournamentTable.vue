@@ -84,9 +84,9 @@
                   {{ formatStatus(tournament.status) }}
                 </Badge>
               </td>
-              <td class="px-6 py-4">{{ tournament.nb_participants }}</td>
-              <td class="px-6 py-4">{{ tournament.nb_matches }}</td>
-              <td class="px-6 py-4">{{ formatDate(tournament.created_at) }}</td>
+              <td class="px-6 py-4">{{ tournament.nbParticipants }}</td>
+              <td class="px-6 py-4">{{ tournament.nbMatches }}</td>
+              <td class="px-6 py-4">{{ formatDate(tournament.createdAt) }}</td>
               <td class="px-6 py-4">
                 <div class="flex space-x-2">
                   <Button

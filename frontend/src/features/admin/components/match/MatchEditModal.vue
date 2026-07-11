@@ -73,11 +73,8 @@ const save = async () => {
   saving.value = true
   try {
     const winnerId = parseInt(formData.value.winner_id)
-    const updateData: Partial<Match> = {
-      winner_id: winnerId
-    }
 
-    await adminMatchesService.updateMatch(props.match.id, updateData)
+    await adminMatchesService.updateMatch(props.match.id, { winnerId })
     
     toastService.success('Succès', 'Match mis à jour avec succès')
     emit('saved')

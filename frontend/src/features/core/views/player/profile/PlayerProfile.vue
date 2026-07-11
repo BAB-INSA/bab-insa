@@ -17,12 +17,12 @@
         </div>
         <div>
           <h1 class="text-3xl font-bold">{{ playerData.username }}</h1>
-          <p class="text-muted-foreground">Membre depuis le {{ formatDate(playerData.created_at) }}</p>
+          <p class="text-muted-foreground">Membre depuis le {{ formatDate(playerData.createdAt) }}</p>
         </div>
       </div>
 
       <!-- Section Statistiques 1v1 -->
-      <div v-if="playerData.total_matches > 0" class="space-y-4">
+      <div v-if="playerData.totalMatches > 0" class="space-y-4">
         <div class="flex items-center gap-2 mb-4">
           <Trophy class="w-5 h-5 text-yellow-600" />
           <h3 class="text-xl font-semibold">Statistiques 1v1</h3>
@@ -34,7 +34,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-yellow-100 rounded-full">
                 <TrendingUp class="w-6 h-6 text-yellow-600" />
               </div>
-              <div class="text-3xl font-bold text-yellow-600 mb-2">{{ Math.round(playerData.elo_rating) }}</div>
+              <div class="text-3xl font-bold text-yellow-600 mb-2">{{ Math.round(playerData.eloRating) }}</div>
               <div class="text-sm font-medium text-muted-foreground">ELO 1v1</div>
             </CardContent>
           </Card>
@@ -45,7 +45,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full">
                 <Target class="w-6 h-6 text-blue-600" />
               </div>
-              <div class="text-3xl font-bold text-blue-600 mb-2">{{ playerData.total_matches }}</div>
+              <div class="text-3xl font-bold text-blue-600 mb-2">{{ playerData.totalMatches }}</div>
               <div class="text-sm font-medium text-muted-foreground">Parties jouées</div>
             </CardContent>
           </Card>
@@ -86,7 +86,7 @@
       </div>
 
       <!-- Section Statistiques 2v2 -->
-      <div v-if="playerData.team_total_matches > 0" class="space-y-4">
+      <div v-if="playerData.teamTotalMatches > 0" class="space-y-4">
         <div class="flex items-center gap-2 mb-4">
           <Users class="w-5 h-5 text-blue-600" />
           <h3 class="text-xl font-semibold">Statistiques 2v2</h3>
@@ -98,7 +98,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full">
                 <TrendingUp class="w-6 h-6 text-blue-600" />
               </div>
-              <div class="text-3xl font-bold text-blue-600 mb-2">{{ Math.round(playerData.team_elo_rating) }}</div>
+              <div class="text-3xl font-bold text-blue-600 mb-2">{{ Math.round(playerData.teamEloRating) }}</div>
               <div class="text-sm font-medium text-muted-foreground">ELO 2v2</div>
             </CardContent>
           </Card>
@@ -109,7 +109,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-cyan-100 rounded-full">
                 <Target class="w-6 h-6 text-cyan-600" />
               </div>
-              <div class="text-3xl font-bold text-cyan-600 mb-2">{{ playerData.team_total_matches }}</div>
+              <div class="text-3xl font-bold text-cyan-600 mb-2">{{ playerData.teamTotalMatches }}</div>
               <div class="text-sm font-medium text-muted-foreground">Parties en équipe</div>
             </CardContent>
           </Card>
@@ -120,7 +120,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-emerald-100 rounded-full">
                 <Trophy class="w-6 h-6 text-emerald-600" />
               </div>
-              <div class="text-3xl font-bold text-emerald-600 mb-2">{{ playerData.team_wins }}</div>
+              <div class="text-3xl font-bold text-emerald-600 mb-2">{{ playerData.teamWins }}</div>
               <div class="text-sm font-medium text-muted-foreground">Victoires</div>
             </CardContent>
           </Card>
@@ -131,7 +131,7 @@
               <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-orange-100 rounded-full">
                 <Target class="w-6 h-6 text-orange-600" />
               </div>
-              <div class="text-3xl font-bold text-orange-600 mb-2">{{ playerData.team_losses }}</div>
+              <div class="text-3xl font-bold text-orange-600 mb-2">{{ playerData.teamLosses }}</div>
               <div class="text-sm font-medium text-muted-foreground">Défaites</div>
             </CardContent>
           </Card>
@@ -218,7 +218,7 @@
                       <span v-else>Joueur inconnu</span>
                     </div>
                     <div class="text-sm text-muted-foreground">
-                      {{ formatDateShort(match.created_at) }}
+                      {{ formatDateShort(match.createdAt) }}
                     </div>
                   </div>
                 </div>
@@ -275,12 +275,12 @@ const winRate = computed(() => {
 })
 
 const teamWinRate = computed(() => {
-  if (!playerData.value || playerData.value.team_total_matches === 0) return 0
-  return Math.round((playerData.value.team_wins / playerData.value.team_total_matches) * 100)
+  if (!playerData.value || playerData.value.teamTotalMatches === 0) return 0
+  return Math.round((playerData.value.teamWins / playerData.value.teamTotalMatches) * 100)
 })
 
 const showEloToggle = computed(() => {
-  return playerData.value && playerData.value.total_matches > 0 && playerData.value.team_total_matches > 0
+  return playerData.value && playerData.value.totalMatches > 0 && playerData.value.teamTotalMatches > 0
 })
 
 const currentEloHistory = computed(() => {
@@ -289,13 +289,13 @@ const currentEloHistory = computed(() => {
 
 
 const getMatchResult = (match: Match, currentPlayerId: number) => {
-  if (match.winner_id === currentPlayerId) return 'win'
-  if (match.winner_id && match.winner_id !== currentPlayerId) return 'loss'
+  if (match.winner?.id === currentPlayerId) return 'win'
+  if (match.winner && match.winner.id !== currentPlayerId) return 'loss'
   return 'pending'
 }
 
 const getOpponent = (match: Match, currentPlayerId: number) => {
-  return match.player1_id === currentPlayerId ? match.player2 : match.player1
+  return match.player1.id === currentPlayerId ? match.player2 : match.player1
 }
 
 const loadPlayerData = async () => {
@@ -372,9 +372,9 @@ const loadEloHistory = async (id: number) => {
     teamEloHistory.value = teamHistory
     
     // Définir le type par défaut en fonction des données disponibles (priorité 2v2)
-    if (playerData.value?.team_total_matches && playerData.value.team_total_matches > 0) {
+    if (playerData.value?.teamTotalMatches && playerData.value.teamTotalMatches > 0) {
       selectedEloType.value = 'team'
-    } else if (playerData.value?.total_matches && playerData.value.total_matches > 0) {
+    } else if (playerData.value?.totalMatches && playerData.value.totalMatches > 0) {
       selectedEloType.value = 'solo'
     }
   } catch (error) {

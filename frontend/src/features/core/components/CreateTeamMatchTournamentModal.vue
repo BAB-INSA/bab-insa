@@ -40,11 +40,11 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="entry in availableOpponentEntries"
-                :key="entry.team.id"
-                :value="entry.team.id.toString()"
+                v-for="team in availableOpponentTeams"
+                :key="team.id"
+                :value="team.id.toString()"
               >
-                {{ entry.team.name }} ({{ entry.team.player1?.username || 'Joueur 1' }} & {{ entry.team.player2?.username || 'Joueur 2' }})
+                {{ team.name }} ({{ team.player1?.username || 'Joueur 1' }} & {{ team.player2?.username || 'Joueur 2' }})
               </SelectItem>
             </SelectContent>
           </Select>
@@ -117,13 +117,12 @@ import { useAuthStore } from '@/features/auth/stores/auth'
 import TeamMatchService from '@/features/core/services/team-match.service'
 import PlayerService from '@/features/core/services/player.service'
 import type { Team } from '@/features/core/types/team'
-import type { TournamentTeamEntry } from '@/features/core/types/tournament'
 import type { TeamMatch } from '@/features/admin/types/team-match'
 
 interface Props {
   open?: boolean
   tournamentId: number
-  tournamentTeams: TournamentTeamEntry[]
+  tournamentTeams: Team[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -145,22 +144,22 @@ const playerTeams = ref<Team[]>([])
 
 // Player's teams that are also registered in the tournament
 const userTournamentTeams = computed(() => {
-  const tournamentTeamIds = new Set(props.tournamentTeams.map(e => e.team_id))
+  const tournamentTeamIds = new Set(props.tournamentTeams.map(t => t.id))
   return playerTeams.value.filter(t => tournamentTeamIds.has(t.id))
 })
 
-// Opponent entries: all tournament teams except the selected user team
-const availableOpponentEntries = computed(() => {
+// Opponent teams: all tournament teams except the selected user team
+const availableOpponentTeams = computed(() => {
   return props.tournamentTeams.filter(
-    entry => entry.team.id.toString() !== selectedTeam1Id.value,
+    team => team.id.toString() !== selectedTeam1Id.value,
   )
 })
 
 // Build a lookup of all tournament teams for display
 const allTeamsMap = computed(() => {
   const map = new Map<string, Team>()
-  for (const entry of props.tournamentTeams) {
-    map.set(entry.team.id.toString(), entry.team)
+  for (const team of props.tournamentTeams) {
+    map.set(team.id.toString(), team)
   }
   for (const team of playerTeams.value) {
     map.set(team.id.toString(), team)
@@ -208,10 +207,10 @@ const handleSubmit = async () => {
     isSubmitting.value = true
 
     const createdMatch = await TeamMatchService.createTeamMatch({
-      team1_id: parseInt(selectedTeam1Id.value),
-      team2_id: parseInt(selectedTeam2Id.value),
-      winner_team_id: parseInt(winnerTeamId.value),
-      tournament_id: props.tournamentId,
+      team1Id: parseInt(selectedTeam1Id.value),
+      team2Id: parseInt(selectedTeam2Id.value),
+      winnerTeamId: parseInt(winnerTeamId.value),
+      tournamentId: props.tournamentId,
     })
 
     const winnerTeam = allTeamsMap.value.get(winnerTeamId.value)

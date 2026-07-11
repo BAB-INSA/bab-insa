@@ -214,9 +214,9 @@ const handleSubmit = async () => {
     isSubmitting.value = true
     
     const teamMatchData: TeamMatchCreateData = {
-      team1_id: parseInt(selectedTeam1Id.value),
-      team2_id: parseInt(selectedTeam2Id.value),
-      winner_team_id: parseInt(winnerTeamId.value)
+      team1Id: parseInt(selectedTeam1Id.value),
+      team2Id: parseInt(selectedTeam2Id.value),
+      winnerTeamId: parseInt(winnerTeamId.value)
     }
     
     // Créer le match d'équipe

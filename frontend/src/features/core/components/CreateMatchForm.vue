@@ -118,7 +118,7 @@ import { Trophy } from 'lucide-vue-next'
 import { useAuthStore } from '@/features/auth/stores/auth'
 import PlayerService from '@/features/core/services/player.service'
 import type { Player } from '@/features/core/types/player'
-import type { MatchCreateData } from '@/features/core/services/match.service'
+import type { MatchCreateData } from '@/features/core/types/match'
 
 // Props
 interface Props {
@@ -169,9 +169,9 @@ const handleSubmit = () => {
   if (!selectedOpponentId.value || !winnerId.value) return
   
   const matchData = {
-    player1_id: currentUserId.value,
-    player2_id: parseInt(selectedOpponentId.value),
-    winner_id: winnerId.value
+    player1Id: currentUserId.value,
+    player2Id: parseInt(selectedOpponentId.value),
+    winnerId: winnerId.value
   }
   
   emit('submit', matchData)

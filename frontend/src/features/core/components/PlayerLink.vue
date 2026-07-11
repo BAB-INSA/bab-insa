@@ -14,10 +14,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Player } from '@/features/core/types/player'
+import type { PlayerMin } from '@/features/core/types/player'
 
 interface Props {
-  player?: Player
+  player?: PlayerMin | null
   showId?: boolean
   class?: string
 }
@@ -28,6 +28,9 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const displayText = computed(() => {
+  if (!props.player) {
+    return ''
+  }
   if (props.showId) {
     return `${props.player.username} (#${props.player.id})`
   }

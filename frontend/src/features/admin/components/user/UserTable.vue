@@ -76,7 +76,7 @@
                 </Badge>
               </td>
               <td class="px-6 py-4">
-                {{ formatDate(user.last_login) }}
+                {{ formatDate(user.lastLogin) }}
               </td>
               <td class="px-6 py-4">
                 <div class="flex space-x-2">
@@ -254,7 +254,8 @@ const formatRole = (role: string) => {
   return role.charAt(0).toUpperCase() + role.slice(1)
 }
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString?: string | null) => {
+  if (!dateString) return '—'
   return new Date(dateString).toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'short',

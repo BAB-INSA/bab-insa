@@ -12,5 +12,6 @@ final class TeamEloHistoryOutput
     public float $eloBefore;
     public float $eloAfter;
     public float $eloChange;
+    public ?int $opponentTeamId = null;
     public string $createdAt;
 }

@@ -31,7 +31,7 @@ import { Trophy } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import CreateMatchForm from './CreateMatchForm.vue'
 import MatchService from '@/features/core/services/match.service'
-import type { MatchCreateData } from '@/features/core/services/match.service'
+import type { MatchCreateData } from '@/features/core/types/match'
 import type { Match } from '@/features/core/types/match'
 
 // Props

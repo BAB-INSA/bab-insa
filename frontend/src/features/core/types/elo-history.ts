@@ -18,5 +18,6 @@ export interface TeamEloHistory {
     eloBefore: number
     eloAfter: number
     eloChange: number
+    opponentTeamId: number | null
     createdAt: string
 }

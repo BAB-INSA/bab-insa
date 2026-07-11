@@ -35,11 +35,11 @@
             <td class="px-4 py-3">
               <TeamLink :team="team" />
             </td>
-            <td class="px-4 py-3 font-medium">{{ Math.round(team.elo_rating) }}</td>
+            <td class="px-4 py-3 font-medium">{{ Math.round(team.eloRating) }}</td>
             <td class="px-4 py-3 text-green-600 dark:text-green-400 font-medium">{{ team.wins }}</td>
             <td class="px-4 py-3 text-red-600 dark:text-red-400 font-medium">{{ team.losses }}</td>
             <td class="px-4 py-3 font-medium">{{ getWinRate(team) }}%</td>
-            <td class="px-4 py-3 text-muted-foreground">{{ team.total_matches }}</td>
+            <td class="px-4 py-3 text-muted-foreground">{{ team.totalMatches }}</td>
           </tr>
         </tbody>
       </table>
@@ -106,8 +106,8 @@ const totalPages = computed(() => paginationInfo.value?.totalPages || 1)
 const totalTeams = computed(() => paginationInfo.value?.total || 0)
 
 const getWinRate = (team: Team): number => {
-  if (team.total_matches === 0) return 0
-  return Math.round((team.wins / team.total_matches) * 100)
+  if (team.totalMatches === 0) return 0
+  return Math.round((team.wins / team.totalMatches) * 100)
 }
 
 

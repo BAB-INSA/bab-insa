@@ -1,4 +1,4 @@
-import type { PlayerMin } from './player'
+import type { Player } from './player'
 
 /** TeamOutput */
 export interface Team {
@@ -10,6 +10,6 @@ export interface Team {
     wins: number
     losses: number
     createdAt: string
-    player1: PlayerMin
-    player2: PlayerMin
+    player1: Player
+    player2: Player
 }

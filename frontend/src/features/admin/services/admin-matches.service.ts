@@ -20,7 +20,7 @@ class AdminMatchesService {
         return response.data
     }
 
-    async updateMatch(matchId: number, data: { status: string }): Promise<Match> {
+    async updateMatch(matchId: number, data: { status?: string; winnerId?: number }): Promise<Match> {
         const response = await apiClient.patch(`/api/matches/${matchId}`, data)
         return response.data
     }

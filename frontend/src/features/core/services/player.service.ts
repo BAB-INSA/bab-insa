@@ -1,5 +1,5 @@
 import apiClient from '@/core/lib/axios.ts'
-import type { Player, PlayerMin, EloChartEntry } from '@/features/core/types/player.ts'
+import type { Player, EloChartEntry } from '@/features/core/types/player.ts'
 import type { EloHistory, TeamEloHistory } from '@/features/core/types/elo-history.ts'
 import type { Match } from '@/features/core/types/match.ts'
 import type { Team } from '@/features/core/types/team.ts'
@@ -19,7 +19,7 @@ class PlayerService {
         return response.data
     }
 
-    async getTopPlayers(limit: number = 100): Promise<PlayerMin[]> {
+    async getTopPlayers(limit: number = 100): Promise<Player[]> {
         const response = await apiClient.get(`/api/players/top?limit=${limit}`)
         return response.data.data
     }

@@ -131,7 +131,7 @@ watch(() => props.tournament, (newTournament) => {
       name: newTournament.name,
       type: newTournament.type,
       status: newTournament.status,
-      description: newTournament.description
+      description: newTournament.description ?? ''
     }
   } else {
     formData.value = getDefaultFormData()

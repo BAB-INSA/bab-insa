@@ -34,7 +34,7 @@
             <td class="px-4 py-3">
               <PlayerLink :player="player" class="font-medium text-primary hover:text-primary/80" />
             </td>
-            <td class="px-4 py-3 font-medium">{{ player.elo_rating }}</td>
+            <td class="px-4 py-3 font-medium">{{ player.eloRating }}</td>
             <td class="px-4 py-3 text-green-600 dark:text-green-400 font-medium">{{ player.wins }}</td>
             <td class="px-4 py-3 text-red-600 dark:text-red-400 font-medium">{{ getLosses(player) }}</td>
             <td class="px-4 py-3 font-medium">{{ getWinRate(player) }}%</td>

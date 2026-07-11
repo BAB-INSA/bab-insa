@@ -44,12 +44,13 @@ class TeamMatchService
             throw new BadRequestHttpException('Winner must be one of the two teams.');
         }
 
+        // Comme en Go : le match est créé en pending, l'ELO et les stats
+        // ne sont appliqués qu'à la confirmation.
         $match = new TeamMatch();
         $match->setTeam1($team1);
         $match->setTeam2($team2);
         $match->setWinnerTeam($winner);
-        $match->setStatus(MatchStatus::Confirmed);
-        $match->setConfirmedAt(new \DateTimeImmutable());
+        $match->setStatus(MatchStatus::Pending);
 
         if ($input->tournamentId !== null) {
             $tournament = $this->tournamentRepository->find($input->tournamentId);
@@ -59,10 +60,7 @@ class TeamMatchService
         }
 
         $this->em->persist($match);
-        $this->applyTeamEloChanges($match, $team1, $team2, $winner);
         $this->em->flush();
-
-        $this->rankingService->updateTeamRanks();
 
         return $this->mapper->teamMatchToOutput($match);
     }
@@ -71,6 +69,20 @@ class TeamMatchService
     {
         $newStatus = $input->statusEnum();
 
+        // Comme en Go : un match ne peut être modifié que tant qu'il est pending
+        if ($match->getStatus() !== MatchStatus::Pending) {
+            throw new BadRequestHttpException('Team match is not pending.');
+        }
+
+        // Comme en Go : correction de l'équipe gagnante possible tant que le match est pending
+        if ($input->winnerTeamId !== null) {
+            $winner = $this->findTeam($input->winnerTeamId);
+            if ($winner->getId() !== $match->getTeam1()->getId() && $winner->getId() !== $match->getTeam2()->getId()) {
+                throw new BadRequestHttpException('Winner must be one of the two teams.');
+            }
+            $match->setWinnerTeam($winner);
+        }
+
         if ($newStatus === MatchStatus::Confirmed) {
             $match->setStatus(MatchStatus::Confirmed);
             $match->setConfirmedAt(new \DateTimeImmutable());
@@ -78,6 +90,7 @@ class TeamMatchService
             $winner = $match->getWinnerTeam();
             if ($winner !== null) {
                 $this->applyTeamEloChanges($match, $match->getTeam1(), $match->getTeam2(), $winner);
+                $this->applyTournamentStats($match, $winner);
             }
         } elseif ($newStatus === MatchStatus::Rejected) {
             $match->setStatus(MatchStatus::Rejected);
@@ -101,7 +114,7 @@ class TeamMatchService
         $team2Avg  = ($team2->getPlayer1()->getTeamEloRating() + $team2->getPlayer2()->getTeamEloRating()) / 2;
 
         // Met à jour ELO des 4 joueurs
-        foreach ([[$team1, $team1Won, $team2Avg], [$team2, !$team1Won, $team1Avg]] as [$team, $won, $opponentAvg]) {
+        foreach ([[$team1, $team1Won, $team2Avg, $team2], [$team2, !$team1Won, $team1Avg, $team1]] as [$team, $won, $opponentAvg, $opponentTeam]) {
             foreach ([$team->getPlayer1(), $team->getPlayer2()] as $player) {
                 $before = $player->getTeamEloRating();
                 $after  = $this->eloCalculator->calculateTeam($before, $opponentAvg, $won);
@@ -117,6 +130,7 @@ class TeamMatchService
                 $h = new TeamEloHistory();
                 $h->setPlayer($player);
                 $h->setTeamMatch($match);
+                $h->setOpponentTeam($opponentTeam);
                 $h->setEloBefore($before);
                 $h->setEloAfter($after);
                 $h->setEloChange(round($after - $before, 2));
@@ -132,6 +146,33 @@ class TeamMatchService
                 $team->setWins($team->getWins() + 1);
             } else {
                 $team->setLosses($team->getLosses() + 1);
+            }
+        }
+    }
+
+    /**
+     * Comme en Go : à la confirmation d'un match lié à un tournoi,
+     * incrémente nb_matches du tournoi et les stats des équipes inscrites.
+     */
+    private function applyTournamentStats(TeamMatch $match, Team $winner): void
+    {
+        $tournament = $match->getTournament();
+        if ($tournament === null) {
+            return;
+        }
+
+        $tournament->setNbMatches($tournament->getNbMatches() + 1);
+
+        foreach ($tournament->getTournamentTeams() as $tt) {
+            $teamId = $tt->getTeam()->getId();
+            if ($teamId !== $match->getTeam1()->getId() && $teamId !== $match->getTeam2()->getId()) {
+                continue;
+            }
+
+            if ($teamId === $winner->getId()) {
+                $tt->setWins($tt->getWins() + 1);
+            } else {
+                $tt->setLosses($tt->getLosses() + 1);
             }
         }
     }

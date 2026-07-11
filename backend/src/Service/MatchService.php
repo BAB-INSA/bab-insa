@@ -82,6 +82,15 @@ class MatchService
             throw new BadRequestHttpException('Match is not pending.');
         }
 
+        // Comme en Go : correction du vainqueur possible tant que le match est pending
+        if ($input->winnerId !== null) {
+            $winner = $this->findPlayer($input->winnerId);
+            if ($winner->getId() !== $match->getPlayer1()->getId() && $winner->getId() !== $match->getPlayer2()->getId()) {
+                throw new BadRequestHttpException('Winner must be one of the two players.');
+            }
+            $match->setWinner($winner);
+        }
+
         if ($newStatus === MatchStatus::Confirmed) {
             $match->setStatus(MatchStatus::Confirmed);
             $match->setConfirmedAt(new \DateTimeImmutable());
